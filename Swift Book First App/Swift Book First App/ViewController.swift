@@ -28,15 +28,16 @@ class ViewController: UIViewController {
     @IBAction func TouchDigit(_ sender: UIButton) {
         let title = sender.titleLabel?.text
         display.text! = process(title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed)
-        
     }
     
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInMiddleOfTyping {
             brain.setOperand(displayValue)
+            brain.addSymbolForOperation(String(displayValue))
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
+            brain.addSymbolForOperation(mathSymbol)
             brain.performOperation(for: mathSymbol)
             if mathSymbol == "." {
                 dotButtonPressed = true
@@ -57,20 +58,10 @@ class ViewController: UIViewController {
         _ dotButtonPressed: Bool
     ) -> String {
         if userIsInMiddleOfTyping {
-            if dotButtonPressed {
-                brain.appendAfterDot(to: title)
-                return brain.result.map { String($0) } ?? ""
-            } else {
-                return String(displayedText).components(separatedBy: ".")[0] + title
-            }
+            return String(displayedText).components(separatedBy: ".")[0] + title
         } else {
-            if dotButtonPressed {
-                brain.appendAfterDot(to: title)
-                return String(brain.result!)
-            } else {
-                self.userIsInMiddleOfTyping = true
-                return title
-            }
+            self.userIsInMiddleOfTyping = true
+            return title
         }
     }
 }

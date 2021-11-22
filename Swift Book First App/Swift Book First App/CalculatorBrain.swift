@@ -7,141 +7,116 @@
 
 import Foundation
 
-// отдельный файл для логики построения стринги
-
-// поменять на класс
-struct CalculatorBrain {
-    // 2 метода
-    // инпут (паблик)
-    // аутпут (паблик)
+class CalculatorBrain {
     
-    
-    private var pendingBinaryOperation: PendingBinaryOperation?
-    private var opsSequence: [String] = []
-    private var pendingBinaryOps: [String] = []
-    var accumulator: (d: Double?, s: String?) {
-        didSet {
-            if let operand = accumulator.s {
-                if !operand.contains("...") {
-                    opsSequence.append(operand)
-                    print("ops")
-                    print(opsSequence)
-                    print("pendingBinaryOps")
-                    print(pendingBinaryOps)
-                }
-            }
-        }
-    }
-    
-    public mutating func appendAfterDot(to afterDotNumber: String) {
-        let splitDouble = String(accumulator.d ?? 0).components(separatedBy: ".")
-        let beforeDot = splitDouble[0]
-        let afterDot = splitDouble[1] == "0"
-        ? afterDotNumber
-        : splitDouble[1] + afterDotNumber
-        accumulator = (Double("\(beforeDot).\(afterDot)")!, "\(beforeDot).\(afterDot)")
-    }
-    
-    // вынести в экстенш
-    private enum Operation {
-        case constant(Double)
-        case unaryOperation((Double) -> Double)
-        case binaryOperation((Double, Double) -> Double)
-        case equals
-    }
-    
-    private var operations: [String: Operation] = [
-        "π": .constant(Double.pi),
-        "e": .constant(M_E),
-        "√": .unaryOperation(sqrt),
-        "cos": .unaryOperation(cos),
-        "sin": .unaryOperation(sin),
-        "+/-": .unaryOperation({ -$0 }),
-        "✕": .binaryOperation({ $0 * $1 }),
-        "÷": .binaryOperation({ $0 / $1 }),
-        "+": .binaryOperation({ $0 + $1 }),
-        "-": .binaryOperation({ $0 - $1 }),
-        "=": .equals
-    ]
-    
-    // мне нужно изолировать обработну унарной и бинарной операции
-    // в то же время надо обрабатывать унарные операции внутри бинарных
-    
-    mutating func performOperation(for symbol: String) {
-        guard let operation = operations[symbol] else {
-            return
-        }
-        
-        switch operation {
-        case .constant(let value):
-            accumulator = (value, String("\(value) " + symbol))
-        case .unaryOperation(let function) where accumulator.d != nil && accumulator.s != nil:
-            // варианты унарных операций:
-            // 1) изолированая, на одном числе - просто
-            // 2) унарная операция над бинарным результатом
-            // 3) унарная операция над одним из операндов бинарной операции
-            
-            // как различить каждую?
-            if let accumDouble = accumulator.d,
-               let accumString = accumulator.s {
-                let result = function(accumDouble)
-                if opsSequence.count == 1 {
-                    opsSequence.insert(symbol, at: 0)
-                    accumulator = (result, opsSequence.joined())
-                    opsSequence.removeAll()
-                } else if pendingBinaryOps.count == 2 {
-                    accumulator = (result, pendingBinaryOps.joined() + symbol + "(" + accumString + ")")
-                    let lastOp = opsSequence.last ?? ""
-                    opsSequence.removeAll()
-                    opsSequence.append(lastOp)
-                } else if pendingBinaryOps.count == 3 {
-                    accumulator = (result, symbol + "(" + pendingBinaryOps.joined() + ")=")
-                    opsSequence.removeAll()
-                }
-            }
-        case .binaryOperation(let function):
-            if accumulator.d != nil {
-                pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator.d!)
-                opsSequence.append(symbol)
-                accumulator = (nil, accumulator.s! + symbol + "...")
-                pendingBinaryOps = opsSequence
-            }
-        case .equals:
-            performPendingBinaryOperation()
-        case .unaryOperation:
-            assertionFailure()
-        }
-    }
-    
-    private mutating func performPendingBinaryOperation() {
-        if pendingBinaryOperation != nil && accumulator.d != nil {
-            let result = pendingBinaryOperation!.perform(with: accumulator.d!)
-            pendingBinaryOps = opsSequence
-            accumulator = (result, "=")
-            accumulator.s = opsSequence.joined()
-            pendingBinaryOperation = nil
-            opsSequence.removeAll()
-        }
-    }
-    
-    private struct PendingBinaryOperation {
-        let function: (Double, Double) -> Double
-        let firstOperand: Double
-        
-        mutating func perform(with secondOperand: Double) -> Double {
-            function(firstOperand, secondOperand)
-        }
-    }
-    
-    mutating func setOperand(_ operand: Double) {
-        accumulator = (operand, String(operand))
-    }
-    
+    var accumulator: (d: Double?, s: String?)
     var result: Double? {
         accumulator.d
     }
+    private var state: State = .init(
+        first: nil,
+        operation: nil,
+        second: nil,
+        pendingBinaryOp: nil
+    )
+    private struct State {
+        var first: String?
+        var operation: String?
+        var second: String?
+        var result: String?
+        var pendingBinaryOp: ((Double, Double) -> Double)?
+        var display: PrintDisplay? = .init(
+            first: nil,
+            operation: nil,
+            second: nil,
+            result: nil,
+            currentResultString: nil
+        )
+    }
+    private var previousOperation: State?
     
-    private func getOperationString(fromArray: [String]) -> String {
-        fromArray.joined()
+    func addSymbolForOperation(_ symbol: String) {
+        if state.first == nil {
+            state.first = symbol
+            state.display?.first = symbol
+        } else if state.operation == nil {
+            state.operation = symbol
+            state.display?.operation = symbol
+        } else if state.second == nil {
+            state.second = symbol
+            state.display?.second = symbol
+        }
+    }
+    
+    func performOperation(for symbol: String) {
+        guard let operation = CalculatorOperation.getOperation(by: symbol) else {
+            return
+        }
+        guard var _ = state.display else {  // если записывать в переменную _(display), то в структура state.display не будет перезаписываться?
+            return
+        }
+        switch operation {
+        case .constant(let value):
+            accumulator = (value, String(value))
+        case .unaryOperation(let function):
+            state.display!.isUnary = true
+            if let first = state.first,
+               let currentOperation = state.operation {
+                if symbol != currentOperation {
+                    if let second = state.second {
+                        // x+√(y) унарная операция над вторым операндом
+                        state.result = String(function(Double(second)!))
+                        state.display!.operation = symbol
+                        accumulator = (Double(state.result!)!,
+                                       state.display!.resultString)
+                    }
+                } else {
+                    // √(х) простая унарная операция
+                    state.result = String(function(Double(first)!))
+                    accumulator = (Double(state.result!)!,
+                                   state.display!.resultString)
+                }
+            } else if previousOperation != nil {
+                // √(x+y) унарная операция над результатом бинарной
+                guard let previousOperation = previousOperation,
+                      let display = previousOperation.display else {
+                          return
+                      }
+                state.display!.first = display.first
+                state.display!.pendingBinaryOp = display.pendingBinaryOp
+                state.display!.second = display.second
+                state.display!.operation = symbol
+                state.display!.currentResultString = display.result
+                state.result = String(function(Double(
+                    state.display!.currentResultString!)!))
+                accumulator = (Double(state.result!) ?? 0,
+                               state.display!.resultString)
+            }
+            
+            state.display!.isUnary = false
+            previousOperation = state
+            state = State() // безопасно ли так чистить состояние?
+        case .binaryOperation(let function):
+            state.pendingBinaryOp = function
+            state.display!.pendingBinaryOp = symbol
+            accumulator = (nil, state.display!.resultString)
+        case .equals:
+            guard let pendingBinaryOp = state.pendingBinaryOp,
+                  let firstOp = state.first,
+                  let secondOp = state.second else {
+                      return
+                  }
+            state.result = String(pendingBinaryOp(Double(firstOp)!,
+                                                  Double(secondOp)!))
+            state.display!.result = state.result
+            accumulator = (Double(state.display!.result!)!,
+                           state.display!.resultString)
+            previousOperation = state
+            state = State()
+        }
+    }
+    
+    func setOperand(_ operand: Double) {
+        accumulator = (operand, String(operand))
     }
 }
