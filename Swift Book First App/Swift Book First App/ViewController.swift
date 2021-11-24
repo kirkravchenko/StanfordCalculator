@@ -8,9 +8,9 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var display: UILabel!
-        
+    
     @IBOutlet weak var resultDescription: UILabel!
     
     private var brain = CalculatorBrain()
@@ -27,7 +27,9 @@ class ViewController: UIViewController {
     
     @IBAction func TouchDigit(_ sender: UIButton) {
         let title = sender.titleLabel?.text
-        display.text! = process(title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed)
+        display.text! = process(
+            title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed
+        )
     }
     
     @IBAction func performOperation(_ sender: UIButton) {

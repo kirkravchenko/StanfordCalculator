@@ -9,7 +9,6 @@ import Foundation
 
 extension CalculatorBrain {
     
-    // недоступен из calculator brain когда приват
     enum CalculatorOperation {
         
         case constant(Double)
@@ -21,14 +20,15 @@ extension CalculatorBrain {
             let operations: [String: CalculatorOperation] = [
                 "π": .constant(Double.pi),
                 "e": .constant(M_E),
+                "C": .constant(0),
                 "√": .unaryOperation(sqrt),
                 "cos": .unaryOperation(cos),
                 "sin": .unaryOperation(sin),
-                "+/-": .unaryOperation({ -$0 }),
-                "✕": .binaryOperation({ $0 * $1 }),
-                "÷": .binaryOperation({ $0 / $1 }),
-                "+": .binaryOperation({ $0 + $1 }),
-                "-": .binaryOperation({ $0 - $1 }),
+                "+/-": .unaryOperation(-),
+                "✕": .binaryOperation(*),
+                "÷": .binaryOperation(/),
+                "+": .binaryOperation(+),
+                "-": .binaryOperation(-),
                 "=": .equals
             ]
             return operations[symbol]

@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5B1940BA273D20FC00DE779A /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1940B9273D20FC00DE779A /* CalculatorBrain.swift */; };
-		5B5259882747AD1C00475540 /* CalcBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5259872747AD1C00475540 /* CalcBrain.swift */; };
-		5B52598A2747AD5D00475540 /* PrintDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5259892747AD5D00475540 /* PrintDisplay.swift */; };
 		5B52598C2747ADB300475540 /* CalculatorOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B52598B2747ADB300475540 /* CalculatorOperation.swift */; };
 		5B6D29C8273A784C0058CB96 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6D29C7273A784C0058CB96 /* AppDelegate.swift */; };
 		5B6D29CA273A784C0058CB96 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6D29C9273A784C0058CB96 /* SceneDelegate.swift */; };
@@ -17,13 +15,12 @@
 		5B6D29CF273A784C0058CB96 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29CD273A784C0058CB96 /* Main.storyboard */; };
 		5B6D29D1273A78500058CB96 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29D0273A78500058CB96 /* Assets.xcassets */; };
 		5B6D29D4273A78500058CB96 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29D2273A78500058CB96 /* LaunchScreen.storyboard */; };
-		5BB1ECE6274909FE007A45A5 /* Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1ECE5274909FE007A45A5 /* Display.swift */; };
+		5B7E199F274E6F5500724925 /* OperatorStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7E199E274E6F5500724925 /* OperatorStack.swift */; };
+		5BA53AB3274CE309001E9305 /* Operands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA53AB2274CE309001E9305 /* Operands.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5B1940B9273D20FC00DE779A /* CalculatorBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
-		5B5259872747AD1C00475540 /* CalcBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcBrain.swift; sourceTree = "<group>"; };
-		5B5259892747AD5D00475540 /* PrintDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintDisplay.swift; sourceTree = "<group>"; };
 		5B52598B2747ADB300475540 /* CalculatorOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorOperation.swift; sourceTree = "<group>"; };
 		5B6D29C4273A784C0058CB96 /* Swift Book First App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swift Book First App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6D29C7273A784C0058CB96 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -33,7 +30,8 @@
 		5B6D29D0273A78500058CB96 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B6D29D3273A78500058CB96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5B6D29D5273A78500058CB96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5BB1ECE5274909FE007A45A5 /* Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Display.swift; sourceTree = "<group>"; };
+		5B7E199E274E6F5500724925 /* OperatorStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorStack.swift; sourceTree = "<group>"; };
+		5BA53AB2274CE309001E9305 /* Operands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operands.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,15 +57,6 @@
 			path = "System default files";
 			sourceTree = "<group>";
 		};
-		5B5259862747AD0A00475540 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-				5B5259872747AD1C00475540 /* CalcBrain.swift */,
-				5B5259892747AD5D00475540 /* PrintDisplay.swift */,
-			);
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		5B6D29BB273A784C0058CB96 = {
 			isa = PBXGroup;
 			children = (
@@ -87,13 +76,13 @@
 		5B6D29C6273A784C0058CB96 /* Swift Book First App */ = {
 			isa = PBXGroup;
 			children = (
-				5B5259862747AD0A00475540 /* New Group */,
 				5B1940B8273C0B8400DE779A /* System default files */,
 				5B6D29CB273A784C0058CB96 /* ViewController.swift */,
 				5B1940B9273D20FC00DE779A /* CalculatorBrain.swift */,
+				5BA53AB2274CE309001E9305 /* Operands.swift */,
 				5B52598B2747ADB300475540 /* CalculatorOperation.swift */,
 				5B6D29CD273A784C0058CB96 /* Main.storyboard */,
-				5BB1ECE5274909FE007A45A5 /* Display.swift */,
+				5B7E199E274E6F5500724925 /* OperatorStack.swift */,
 			);
 			path = "Swift Book First App";
 			sourceTree = "<group>";
@@ -169,13 +158,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B5259882747AD1C00475540 /* CalcBrain.swift in Sources */,
+				5B7E199F274E6F5500724925 /* OperatorStack.swift in Sources */,
 				5B52598C2747ADB300475540 /* CalculatorOperation.swift in Sources */,
 				5B6D29CC273A784C0058CB96 /* ViewController.swift in Sources */,
 				5B6D29C8273A784C0058CB96 /* AppDelegate.swift in Sources */,
 				5B1940BA273D20FC00DE779A /* CalculatorBrain.swift in Sources */,
-				5B52598A2747AD5D00475540 /* PrintDisplay.swift in Sources */,
-				5BB1ECE6274909FE007A45A5 /* Display.swift in Sources */,
+				5BA53AB3274CE309001E9305 /* Operands.swift in Sources */,
 				5B6D29CA273A784C0058CB96 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
