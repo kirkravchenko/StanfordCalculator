@@ -32,9 +32,14 @@ class ViewController: UIViewController {
     
     @IBAction func TouchDigit(_ sender: UIButton) {
         let title = sender.titleLabel?.text
-        displayValue = process(
-            title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed
-        )
+        if userIsInMiddleOfTyping && title!.elementsEqual(".") && !displayValue.contains(".") {
+            print(display.text!)
+            display.text! += title!
+        } else if !title!.elementsEqual(".") {
+            displayValue = process(
+                title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed
+            )
+        }
         brain.appendToDescription(symbol: title!)
     }
     
