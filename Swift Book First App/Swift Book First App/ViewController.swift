@@ -30,7 +30,7 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction func TouchDigit(_ sender: UIButton) {
+    @IBAction func touchSymbol(_ sender: UIButton) {
         let title = sender.titleLabel?.text
         if userIsInMiddleOfTyping && title!.elementsEqual(".")
             && !displayValue.contains(".") {
