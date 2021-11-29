@@ -18,17 +18,21 @@ class ViewController: UIViewController {
     var dotButtonPressed = false
     var displayValue: String {
         get {
-            return display.text!
+            display.text ?? ""
         }
         set {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.maximumFractionDigits = 6
-            formatter.usesGroupingSeparator = false
-            display.text! = formatter.string(from: formatter.number(
-                from: newValue)!)!
+            display.text = Self.formatter.string(from: Self.formatter.number(
+                from: newValue)!)! // - TODO избавиться от форс анврапа
         }
     }
+    
+    private static let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 6
+        formatter.usesGroupingSeparator = false
+        return formatter
+    }()
     
     @IBAction func touchSymbol(_ sender: UIButton) {
         let title = sender.titleLabel?.text
