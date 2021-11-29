@@ -16,51 +16,51 @@ class ViewController: UIViewController {
     private var brain = CalculatorBrain()
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
-    var displayValue: Double {
+    var displayValue: String {
         get {
-            Double(display.text!)!
+            return display.text!
         }
         set {
-            display.text! = String(newValue)
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.maximumFractionDigits = 6
+            formatter.usesGroupingSeparator = false
+            display.text! = formatter.string(from: formatter.number(
+                from: newValue)!)!
         }
     }
     
     @IBAction func TouchDigit(_ sender: UIButton) {
         let title = sender.titleLabel?.text
-        display.text! = process(
+        displayValue = process(
             title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed
         )
+        brain.appendToDescription(symbol: title!)
     }
     
     @IBAction func performOperation(_ sender: UIButton) {
+        brain.appendToDescription(symbol: sender.titleLabel!.text!)
         if userIsInMiddleOfTyping {
-            brain.setOperand(displayValue)
-            brain.addSymbolForOperation(String(displayValue))
+            brain.setOperand(Double(displayValue)!)
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
-            brain.addSymbolForOperation(mathSymbol)
             brain.performOperation(for: mathSymbol)
-            if mathSymbol == "." {
-                dotButtonPressed = true
-            } else {
-                dotButtonPressed = false
-            }
         }
-        if let result = brain.result {
-            displayValue = result
+        if let result = brain.accumulator.d {
+            displayValue = String(result)
         }
         resultDescription.text = brain.accumulator.s
     }
     
     func process(
         _ title: String,
-        _ displayedText: Double,
+        _ displayedText: String,
         _ userIsInMiddleOfTyping: Bool,
         _ dotButtonPressed: Bool
     ) -> String {
         if userIsInMiddleOfTyping {
-            return String(displayedText).components(separatedBy: ".")[0] + title
+            return displayedText + title
         } else {
             self.userIsInMiddleOfTyping = true
             return title

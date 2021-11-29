@@ -12,8 +12,8 @@ extension CalculatorBrain {
     enum CalculatorOperation {
         
         case constant(Double)
-        case unaryOperation((Double) -> Double)
-        case binaryOperation((Double, Double) -> Double)
+        case unaryOperation((Double) -> Double, (String) -> String)
+        case binaryOperation((Double, Double) -> Double, (String, String) -> String)
         case equals
         
         static func getOperation(by symbol: String) -> CalculatorOperation? {
@@ -21,14 +21,14 @@ extension CalculatorBrain {
                 "π": .constant(Double.pi),
                 "e": .constant(M_E),
                 "C": .constant(0),
-                "√": .unaryOperation(sqrt),
-                "cos": .unaryOperation(cos),
-                "sin": .unaryOperation(sin),
-                "+/-": .unaryOperation(-),
-                "✕": .binaryOperation(*),
-                "÷": .binaryOperation(/),
-                "+": .binaryOperation(+),
-                "-": .binaryOperation(-),
+                "√": .unaryOperation(sqrt, { "√(" + $0 + ")" }),
+                "cos": .unaryOperation(cos, { "cos(" + $0 + ")" }),
+                "sin": .unaryOperation(sin, { "sin(" + $0 + ")" }),
+                "+/-": .unaryOperation(-, { "±(" + $0 + ")" }),
+                "✕": .binaryOperation(*, { "\($0)\($1)=" }),
+                "÷": .binaryOperation(/, { "\($0)\($1)=" }),
+                "+": .binaryOperation(+, { "\($0)\($1)=" }),
+                "-": .binaryOperation(-, { "\($0)\($1)=" }),
                 "=": .equals
             ]
             return operations[symbol]

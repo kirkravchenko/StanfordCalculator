@@ -10,144 +10,99 @@ import Foundation
 class CalculatorBrain {
     
     var accumulator: (d: Double?, s: String?)
-    var result: Double? {
-        accumulator.d
-    }
-    
-    private var currentState: State = .init(
-        first: nil,
-        operation: nil,
-        second: nil,
-        result: nil,
-        pendingBinaryOp: nil
-    )
-    struct State {
-        var first: Operator?
-        var operation: String?
-        var second: Operator?
-        var result: Operator?
-        var pendingBinaryOp: ((Double, Double) -> Double)?
-    }
-    var stateStack = StateStack()
-    
-    func addSymbolForOperation(_ symbol: String) {
-        if currentState.first == nil && currentState.operation == nil {
-            guard let numberOperand = Double(symbol) else {
-                currentState.operation = symbol
-                return
-            }
-            currentState.first = NumberOperator(numberOperand)
-        } else if currentState.operation == nil {
-            currentState.operation = symbol
-        } else if currentState.second == nil {
-            guard let numberOperand = Double(symbol) else {
-                currentState.operation = symbol
-                return
-            }
-            currentState.second = NumberOperator(numberOperand)
+    private var description = ""
+    private struct PendingBinaryOperation {
+        var function: (Double,Double) -> Double
+        var formattingFunction: (String, String) -> String
+        var firstOperand: Double
+        var stringRepresentation: String
+        var unaryOperationInside = false
+        func perform (with secondOperand: Double) -> Double {
+            return function (firstOperand, secondOperand)
         }
     }
+    private var pendingBinaryOperation: PendingBinaryOperation?
+    private var resultIsPending: Bool {
+        return pendingBinaryOperation != nil
+    }
+    private let ellipsis = "..."
+    private let equals = "="
+    private let empty = ""
     
+    private func  performPendingBinaryOperation() {
+        if resultIsPending && accumulator.d != nil {
+            if pendingBinaryOperation!.unaryOperationInside {
+                accumulator.s = pendingBinaryOperation!.stringRepresentation
+                    .replacingOccurrences(of: ellipsis, with: equals)
+                pendingBinaryOperation!.unaryOperationInside = false
+            } else {
+                accumulator.s = pendingBinaryOperation!.formattingFunction(     // formattingFunction takes first String parameter
+                    pendingBinaryOperation!.stringRepresentation                // representing first operand and operation sign
+                        .replacingOccurrences(                                  // (e.g. "7+")
+                            of: ellipsis, with: empty                           // second operand is second operand value
+                        ),
+                    accumulator.d!.isEqual(to: Double.pi) ? "π" :
+                        accumulator.d!.isEqual(to: M_E) ? "e" :
+                        String(accumulator.d!)
+                )
+            }
+            accumulator.d = pendingBinaryOperation!.perform(with: accumulator.d!)
+            pendingBinaryOperation = nil
+            description = ""
+         }
+    }
+        
     func performOperation(for symbol: String) {
         guard let operation = CalculatorOperation.getOperation(by: symbol) else {
             return
         }
         switch operation {
         case .constant(let value):
-            accumulator = (value, String(value))
-            currentState = State()
-        case .unaryOperation(let function):
-            performUnaryOp(function, symbol)
-        case .binaryOperation(let function):
-            set(function, andOperation: symbol)
-        case .equals:
-            performBinaryOp()
-        }
-    }
-    
-    func performUnaryOp(_ function: (Double) -> Double, _ symbol: String) {
-        if var first = currentState.first,
-           let currentOperation = currentState.operation {
-            if symbol != currentOperation {
-                if var second = currentState.second {
-                    second = UnaryOperator(value: second.value,
-                                           symbol: symbol,
-                                           result: function(second.value))
-                    currentState.second = second
-                    guard let firstOp = currentState.first,
-                          let secondOp = currentState.second,
-                          let operation = currentState.operation else {
-                              assertionFailure()
-                              return
-                          }
-                    accumulator = (secondOp.result, firstOp.description +
-                                   operation + secondOp.description)
+            accumulator = (value, symbol.elementsEqual("C") ? "0" : symbol)
+            if symbol.elementsEqual("C") {
+                description = empty
+            }
+        case .unaryOperation(let function, let formattingFunction):
+            if accumulator.d != nil && accumulator.s != nil {
+                var fisrtOperand = empty
+                var result = empty
+                if !resultIsPending {
+                    fisrtOperand = accumulator.s!
+                            .replacingOccurrences(of: equals, with: empty)
+                    result = formattingFunction(fisrtOperand) + equals
                 } else {
-                    assertionFailure()
+                    pendingBinaryOperation!.unaryOperationInside = true
+                    fisrtOperand = pendingBinaryOperation!.stringRepresentation
+                        .replacingOccurrences(of: ellipsis, with: empty)
+                    result = fisrtOperand + formattingFunction(String(
+                        accumulator.d!)) + ellipsis
+                    pendingBinaryOperation!.stringRepresentation = result
                 }
-            } else {
-                first = UnaryOperator(value: first.value,
-                                      symbol: symbol,
-                                      result: function(first.value))
-                currentState.result = first
-                accumulator = (first.result, first.description + "=")
-                stateStack.push(currentState)
-                currentState = State()
+                accumulator = (function(accumulator.d!), result)
             }
-        } else {
-            let previousState = stateStack.peek()
-            guard let previousOp = previousState.result as Operator? else {
-                assertionFailure()
-                return
+        case .binaryOperation(let function, let formattingFunction):
+            if accumulator.d != nil && accumulator.s != nil {
+                pendingBinaryOperation = PendingBinaryOperation (
+                    function: function, formattingFunction: formattingFunction,
+                    firstOperand: accumulator.d!,
+                    stringRepresentation: accumulator.s!
+                        .replacingOccurrences(of: equals, with: empty)
+                    + symbol + ellipsis
+                )
+                accumulator = (nil, pendingBinaryOperation!.stringRepresentation)
             }
-            let unaryOp = UnaryOperator(value: previousOp.result,
-                                        symbol: symbol,
-                                        result: function(previousOp.result))
-            currentState.result = unaryOp
-            accumulator = (unaryOp.result, symbol +
-                           previousOp.description + "=")
-            stateStack.push(currentState)
-            currentState = State()
+        case .equals:
+            performPendingBinaryOperation()
         }
-    }
-    
-    func set(_ function: @escaping (Double, Double) -> Double,
-             andOperation symbol: String) {
-        currentState.pendingBinaryOp = function
-        if currentState.first == nil {
-            let previousState = stateStack.peek()
-            currentState.first = previousState.result
-        }
-        guard let firstOperand = currentState.first else {
-            assertionFailure()
-            return
-        }
-        accumulator = (nil, firstOperand.description +
-                       symbol + "...")
-    }
-    
-    func performBinaryOp() {
-        guard let firstOp = currentState.first,
-              let secondOp = currentState.second,
-              let operation = currentState.operation,
-              let pendingbinaryOp = currentState.pendingBinaryOp else {
-                  assertionFailure()
-                  return
-              }
-        let binaryOp = BinaryOperator(
-            value: firstOp, secondValue: secondOp,
-            symbol: operation,
-            result: pendingbinaryOp(
-                currentState.first!.result, currentState.second!.result
-            )
-        )
-        currentState.result = binaryOp
-        accumulator = (binaryOp.result, binaryOp.description + "=")
-        stateStack.push(currentState)
-        currentState = State()
     }
     
     func setOperand(_ operand: Double) {
         accumulator = (operand, String(operand))
+    }
+    
+    func appendToDescription(symbol: String) {
+        if symbol != equals {
+            description.append(contentsOf: symbol)
+        }
     }
 }

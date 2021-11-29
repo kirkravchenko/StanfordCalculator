@@ -15,8 +15,8 @@
 		5B6D29CF273A784C0058CB96 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29CD273A784C0058CB96 /* Main.storyboard */; };
 		5B6D29D1273A78500058CB96 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29D0273A78500058CB96 /* Assets.xcassets */; };
 		5B6D29D4273A78500058CB96 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B6D29D2273A78500058CB96 /* LaunchScreen.storyboard */; };
-		5B7E199F274E6F5500724925 /* OperatorStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7E199E274E6F5500724925 /* OperatorStack.swift */; };
 		5BA53AB3274CE309001E9305 /* Operands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA53AB2274CE309001E9305 /* Operands.swift */; };
+		5BF8E6C4274FA13600623F70 /* OperationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF8E6C3274FA13600623F70 /* OperationStack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +30,8 @@
 		5B6D29D0273A78500058CB96 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B6D29D3273A78500058CB96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5B6D29D5273A78500058CB96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5B7E199E274E6F5500724925 /* OperatorStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorStack.swift; sourceTree = "<group>"; };
 		5BA53AB2274CE309001E9305 /* Operands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operands.swift; sourceTree = "<group>"; };
+		5BF8E6C3274FA13600623F70 /* OperationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +82,7 @@
 				5BA53AB2274CE309001E9305 /* Operands.swift */,
 				5B52598B2747ADB300475540 /* CalculatorOperation.swift */,
 				5B6D29CD273A784C0058CB96 /* Main.storyboard */,
-				5B7E199E274E6F5500724925 /* OperatorStack.swift */,
+				5BF8E6C3274FA13600623F70 /* OperationStack.swift */,
 			);
 			path = "Swift Book First App";
 			sourceTree = "<group>";
@@ -158,12 +158,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B7E199F274E6F5500724925 /* OperatorStack.swift in Sources */,
 				5B52598C2747ADB300475540 /* CalculatorOperation.swift in Sources */,
 				5B6D29CC273A784C0058CB96 /* ViewController.swift in Sources */,
 				5B6D29C8273A784C0058CB96 /* AppDelegate.swift in Sources */,
 				5B1940BA273D20FC00DE779A /* CalculatorBrain.swift in Sources */,
 				5BA53AB3274CE309001E9305 /* Operands.swift in Sources */,
+				5BF8E6C4274FA13600623F70 /* OperationStack.swift in Sources */,
 				5B6D29CA273A784C0058CB96 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
