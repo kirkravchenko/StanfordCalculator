@@ -14,52 +14,91 @@ class ViewController: UIViewController {
     @IBOutlet weak var resultDescription: UILabel!
     
     private var brain = CalculatorBrain()
+    private let ellipsis = "..."
+    private let equals = "="
+    private let dot = "."
+    private let defaultValue = "0"
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
-    var displayValue: String {
+    var displayDescription: String {
         get {
-            display.text ?? ""
+            resultDescription.text ?? defaultValue
         }
         set {
-            display.text = Self.formatter.string(from: Self.formatter.number(
-                from: newValue)!)! // - TODO избавиться от форс анврапа
+            resultDescription.text = newValue
+        }
+    }
+    var displayValue: String {
+        get {
+            display.text ?? defaultValue
+        }
+        set {
+            display.text = Self.formatter.string(
+                from: Self.formatter.number(
+                    from: newValue) ?? 0) ?? defaultValue
         }
     }
     
     private static let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 6
         formatter.usesGroupingSeparator = false
         return formatter
     }()
     
     @IBAction func touchSymbol(_ sender: UIButton) {
-        let title = sender.titleLabel?.text
-        if userIsInMiddleOfTyping && title!.elementsEqual(".")
-            && !displayValue.contains(".") {
-            display.text! += title!
-        } else if !title!.elementsEqual(".") {
+        guard let title = sender.titleLabel?.text else { return }
+        if userIsInMiddleOfTyping && title.elementsEqual(dot)
+            && !displayValue.contains(dot) {
+            display.text! += title
+        } else if !title.elementsEqual(dot) {
             displayValue = process(
-                title!, displayValue, userIsInMiddleOfTyping, dotButtonPressed
+                title, displayValue, userIsInMiddleOfTyping, dotButtonPressed
             )
         }
-        brain.appendToDescription(symbol: title!)
+        if title != "=" {
+            brain.description.append(contentsOf: title)
+        }
+    }
+    
+    @IBAction func touchRandomizer(_ sender: UIButton) {
+        displayValue = String(Double.random(in: 0.0 ..< 1.0))
     }
     
     @IBAction func performOperation(_ sender: UIButton) {
-        brain.appendToDescription(symbol: sender.titleLabel!.text!)
         if userIsInMiddleOfTyping {
-            brain.setOperand(Double(displayValue)!)
+            brain.setOperand(displayValue)
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
             brain.performOperation(for: mathSymbol)
+            if title != "=" {
+                brain.description.append(contentsOf: mathSymbol)
+            }
         }
-        if let result = brain.accumulator.d {
-            displayValue = String(result)
+        if let result = brain.result {
+            displayValue = String(result.d)
+            if brain.resultIsPending {
+                displayDescription = result.s + ellipsis
+            } else {
+                displayDescription = result.s + equals
+            }
         }
-        resultDescription.text = brain.accumulator.s
+    }
+    
+    @IBAction func touchBackspace(_ sender: UIButton) {
+        if displayValue.count > 1 {
+            displayValue.removeLast()
+        } else {
+            displayValue = defaultValue
+        }
+    }
+    
+    @IBAction func touchCancel(_ sender: UIButton) {
+        displayValue = defaultValue
+        displayDescription = defaultValue
     }
     
     func process(
