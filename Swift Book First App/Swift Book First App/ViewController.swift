@@ -58,7 +58,7 @@ class ViewController: UIViewController {
                 title, displayValue, userIsInMiddleOfTyping, dotButtonPressed
             )
         }
-        if title != "=" {
+        if title != equals {
             brain.description.append(contentsOf: title)
         }
     }
@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         }
         if let mathSymbol = sender.titleLabel?.text {
             brain.performOperation(for: mathSymbol)
-            if title != "=" {
+            if title != equals {
                 brain.description.append(contentsOf: mathSymbol)
             }
         }
@@ -98,6 +98,7 @@ class ViewController: UIViewController {
     @IBAction func touchCancel(_ sender: UIButton) {
         displayValue = defaultValue
         displayDescription = defaultValue
+        brain = CalculatorBrain()
     }
     
     func process(
