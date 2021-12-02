@@ -73,7 +73,7 @@ class CalculatorBrain {
         }
     }
     
-    func setOperand(_ operand: String) {
-        accumulator = (Double(operand)!, operand)
+    func setOperand(_ operand: Double, with formatting: String) {
+        accumulator = (operand, formatting)
     }
 }

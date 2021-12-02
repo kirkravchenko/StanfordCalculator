@@ -65,7 +65,7 @@ class ViewController: UIViewController {
     
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInMiddleOfTyping {
-            brain.setOperand(displayValue)
+            brain.setOperand(Double(displayValue) ?? 0, with: displayValue)
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
