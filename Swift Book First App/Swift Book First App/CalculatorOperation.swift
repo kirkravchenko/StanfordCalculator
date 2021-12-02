@@ -15,6 +15,7 @@ extension CalculatorBrain {
         case unaryOperation((Double) -> Double, (String) -> String)
         case binaryOperation((Double, Double) -> Double, (String, String) -> String)
         case equals
+        case random(() -> Double, (Double) -> String)
         
         static func getOperation(by symbol: String) -> CalculatorOperation? {
             let operations: [String: CalculatorOperation] = [
@@ -29,7 +30,8 @@ extension CalculatorBrain {
                 "÷": .binaryOperation(/, { "\($0)÷\($1)" }),
                 "+": .binaryOperation(+, { "\($0)+\($1)" }),
                 "-": .binaryOperation(-, { "\($0)-\($1)" }),
-                "=": .equals
+                "=": .equals,
+                "?": .random({ Double.random(in: 0.0 ..< 1.0) }, { String($0) })
             ]
             return operations[symbol]
         }

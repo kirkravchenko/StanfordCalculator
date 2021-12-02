@@ -63,10 +63,6 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction func touchRandomizer(_ sender: UIButton) {
-        displayValue = String(Double.random(in: 0.0 ..< 1.0))
-    }
-    
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInMiddleOfTyping {
             brain.setOperand(displayValue)
@@ -84,6 +80,9 @@ class ViewController: UIViewController {
                 displayDescription = result.s + ellipsis
             } else {
                 displayDescription = result.s + equals
+                if sender.titleLabel?.text == "?" {
+                    displayDescription = String(displayValue)
+                }
             }
         }
     }

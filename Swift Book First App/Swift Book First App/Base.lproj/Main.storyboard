@@ -289,7 +289,7 @@
                                                             <fontDescription key="titleFontDescription" type="system" pointSize="37"/>
                                                         </buttonConfiguration>
                                                         <connections>
-                                                            <action selector="touchRandomizer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="S4a-vh-RuN"/>
+                                                            <action selector="performOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RVf-V4-qgo"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9ct-Ux-mv0">

@@ -59,6 +59,9 @@ class CalculatorBrain {
                 )
                 accumulator = (nil, nil)
             }
+        case .random(let function, let formattingFunction):
+            let randomValue = function()
+            accumulator = (randomValue, formattingFunction(randomValue))
         case .equals:
             performPendingBinaryOperation()
         }
