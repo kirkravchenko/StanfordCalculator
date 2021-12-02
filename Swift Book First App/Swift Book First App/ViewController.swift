@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     private let equals = "="
     private let dot = "."
     private let defaultValue = "0"
+    private let randomSymbol = "?"
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
     var displayDescription: String {
@@ -80,7 +81,7 @@ class ViewController: UIViewController {
                 displayDescription = result.s + ellipsis
             } else {
                 displayDescription = result.s + equals
-                if sender.titleLabel?.text == "?" {
+                if sender.titleLabel?.text == randomSymbol {
                     displayDescription = String(displayValue)
                 }
             }
