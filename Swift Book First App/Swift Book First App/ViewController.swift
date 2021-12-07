@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var resultDescription: UILabel!
     
+    @IBOutlet weak var variableDisplay: UILabel!
+    
     private var brain = CalculatorBrain()
     private let ellipsis = "..."
     private let equals = "="
@@ -70,20 +72,13 @@ class ViewController: UIViewController {
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
-            brain.performOperation(for: mathSymbol)
-            if title != equals {
-                brain.description.append(contentsOf: mathSymbol)
-            }
-        }
-        if let result = brain.result {
-            displayValue = String(result.d)
-            if brain.resultIsPending {
-                displayDescription = result.s + ellipsis
+            brain.setOperand(Double(mathSymbol) ?? 0, with: mathSymbol)
+            let result = brain.evaluate()
+            displayValue = String(result.0 ?? 0)
+            if result.1 {
+                displayDescription = result.2 + ellipsis
             } else {
-                displayDescription = result.s + equals
-                if sender.titleLabel?.text == randomSymbol {
-                    displayDescription = String(displayValue)
-                }
+                displayDescription = result.2 + equals
             }
         }
     }

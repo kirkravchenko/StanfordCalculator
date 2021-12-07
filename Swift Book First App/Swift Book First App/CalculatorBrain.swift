@@ -7,9 +7,10 @@
 
 import Foundation
 
-class CalculatorBrain {
+struct CalculatorBrain {
     
     var description = ""
+    @available(*, deprecated, message: "Deprecation description")
     private(set) var result: (d: Double, s: String)?
     private var accumulator: (d: Double?, s: String?)
     private struct PendingBinaryOperation {
@@ -25,10 +26,18 @@ class CalculatorBrain {
         }
     }
     private var pendingBinaryOperation: PendingBinaryOperation?
+    @available(*, deprecated, message: "Deprecation description")
     var resultIsPending: Bool {
         pendingBinaryOperation != nil
     }
-    private func  performPendingBinaryOperation() {
+    
+    private struct Literal {
+        let value: Double?
+        var description: String?
+    }
+    private var operations = [Literal]()
+    
+    private mutating func performPendingBinaryOperation() {
         if resultIsPending && accumulator.d != nil && accumulator.s != nil {
             accumulator = (
                 pendingBinaryOperation!.perform(with: accumulator.d!),
@@ -38,39 +47,77 @@ class CalculatorBrain {
         }
     }
     
-    func performOperation(for symbol: String) {
-        guard let operation = CalculatorOperation.getOperation(by: symbol) else {
-            return
+    func evaluate(using variables: Dictionary<String, Double>? = nil)
+    -> (result: Double?, isPending: Bool, description: String) {
+        if variables != nil {
+            // substitute variables with values
         }
-        switch operation {
-        case .constant(let value):
-            accumulator = (value, symbol)
-        case .unaryOperation(let function, let formattingFunction):
-            if accumulator.d != nil && accumulator.s != nil {
-                accumulator = (function(accumulator.d!),
-                               formattingFunction(accumulator.s!))
+        let operations = self.operations
+        var returnValue: (result: Double?, isPending: Bool,
+                          description: String) = (0.0, false, "")
+        var secondOp: Literal? = nil
+        var result: Literal? = nil
+        var pendingResult: Literal? = nil
+        var pendingBinaryFunction: (function: (Double, Double) -> Double,
+                                    formattingFunction: (String, String) -> String)? = nil
+        
+        for op in operations {
+            if let operation = CalculatorOperation.getOperation(by: op.description!) {
+                switch operation {
+                case .constant(let value):
+                    result = Literal(value: value, description: op.description!)
+                case .unaryOperation(let function, let formattingFunction):
+                    if returnValue.isPending {
+                        secondOp = Literal(value: function(secondOp!.value!),
+                                           description:formattingFunction(
+                                            secondOp!.description!))
+                        pendingResult = Literal(value: secondOp!.value,
+                                                description: pendingBinaryFunction!.formattingFunction(
+                                                    result!.description!, secondOp!.description!))
+                    } else {
+                        result = Literal(value: function(result!.value!),
+                                         description: formattingFunction(
+                                            result!.description!))
+                    }
+                case .binaryOperation(let function, let formattingFunction):
+                    pendingBinaryFunction = (function, formattingFunction)
+                    returnValue.isPending = true
+                case .random(let function, let formattingFunction):
+                    let random = function()
+                    result = Literal(value: random,
+                                     description: formattingFunction(random))
+                case .equals:
+                    if secondOp != nil && pendingBinaryFunction != nil {
+                        result = Literal(value: pendingBinaryFunction!.function(
+                            result!.value!, secondOp!.value!),
+                                         description: pendingBinaryFunction!.formattingFunction(
+                                            result!.description!, secondOp!.description!))
+                        returnValue.isPending = false
+                        secondOp = nil
+                    }
+                }
+            } else {
+                if result != nil && secondOp == nil {
+                    secondOp = Literal(value: op.value!, description: op.description!)
+                } else if result == nil {
+                    result = Literal(value: op.value!, description: op.description!)
+                }
             }
-        case .binaryOperation(let function, let formattingFunction):
-            if accumulator.d != nil && accumulator.s != nil {
-                pendingBinaryOperation = PendingBinaryOperation (
-                    function: function, formattingFunction: formattingFunction,
-                    firstOperand: accumulator.d!,
-                    stringRepresentation: accumulator.s!
-                )
-                accumulator = (nil, nil)
+            if pendingResult != nil {
+                returnValue.result = pendingResult!.value
+                returnValue.description = pendingResult!.description!
+                pendingResult = nil
+            } else if result != nil {
+                returnValue.result = result!.value
+                returnValue.description = result!.description!
             }
-        case .random(let function, let formattingFunction):
-            let randomValue = function()
-            accumulator = (randomValue, formattingFunction(randomValue))
-        case .equals:
-            performPendingBinaryOperation()
         }
-        if let operation = pendingBinaryOperation {
-            result = (accumulator.d ?? operation.firstOperand,
-                      operation.performFormatting(with: accumulator.s ?? ""))
-        } else {
-            result = (accumulator.d ?? 0, accumulator.s ?? "")
-        }
+        return returnValue
+    }
+    
+    mutating func setOperand(_ operand: Double, with formatting: String) {
+        operations.append(Literal(value: operand, description: formatting))
+    }
     }
     
     func setOperand(_ operand: Double, with formatting: String) {
