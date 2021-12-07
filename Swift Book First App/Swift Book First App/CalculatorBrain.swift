@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CalculatorBrain {
+struct CalculatorBrain {
     @available(*, deprecated, message: "Deprecation description")
     private(set) var result: (d: Double, s: String)?
     private struct PendingBinaryOperation {
@@ -119,11 +119,11 @@ class CalculatorBrain {
         }
     }
     
-    func set(operand: Double, with formatting: String) {
+    mutating func set(operand: Double, with formatting: String) {
         sequence.append(.operand(.init(value: operand, description: formatting)))
     }
     
-    func set(operation: String) {
+    mutating func set(operation: String) {
         sequence.append(.operation(.init(symbol: operation)))
     }
     
