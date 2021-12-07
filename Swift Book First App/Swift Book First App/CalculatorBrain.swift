@@ -32,8 +32,8 @@ struct CalculatorBrain {
     }
     
     private struct Literal {
-        let value: Double?
-        var description: String?
+        let value: Double
+        var description: String
     }
     private var operations = [Literal]()
     
@@ -62,29 +62,33 @@ struct CalculatorBrain {
                                     formattingFunction: (String, String) -> String)? = nil
         
         for op in operations {
-            if let operation = CalculatorOperation.getOperation(by: op.description!) {
+            if let operation = CalculatorOperation.getOperation(by: op.description) {
                 switch operation {
                 case .constant(let value):
-                    result = Literal(value: value, description: op.description!)
+                    result = Literal(value: value, description: op.description)
                 case .unaryOperation(let function, let formattingFunction):
                     if returnValue.isPending && secondOp != nil {
-                        secondOp = Literal(value: function(secondOp!.value!),
+                        secondOp = Literal(value: function(secondOp!.value),
                                            description:formattingFunction(
-                                            secondOp!.description!)
+                                            secondOp!.description)
                         )
                         pendingResult = Literal(value: secondOp!.value,
                                                 description: pendingBinaryFunction!.formattingFunction(
-                                                    result!.description!, secondOp!.description!)
+                                                    result!.description, secondOp!.description)
                         )
                     } else {
-                        result = Literal(value: function(result!.value!),
+                        result = Literal(value: function(result!.value),
                                          description: formattingFunction(
-                                            result!.description!)
+                                            result!.description)
                         )
                     }
                 case .binaryOperation(let function, let formattingFunction):
                     pendingBinaryFunction = (function, formattingFunction)
                     returnValue.isPending = true
+                    pendingResult = Literal(value: result!.value,
+                                            description: pendingBinaryFunction!.formattingFunction(
+                                                result!.description, "")
+                    )
                 case .random(let function, let formattingFunction):
                     let random = function()
                     result = Literal(value: random,
@@ -92,9 +96,9 @@ struct CalculatorBrain {
                 case .equals:
                     if secondOp != nil && pendingBinaryFunction != nil {
                         result = Literal(value: pendingBinaryFunction!.function(
-                            result!.value!, secondOp!.value!),
+                            result!.value, secondOp!.value),
                                          description: pendingBinaryFunction!.formattingFunction(
-                                            result!.description!, secondOp!.description!)
+                                            result!.description, secondOp!.description)
                         )
                         returnValue.isPending = false
                         secondOp = nil
@@ -102,18 +106,18 @@ struct CalculatorBrain {
                 }
             } else {
                 if result != nil && secondOp == nil {
-                    secondOp = Literal(value: op.value!, description: op.description!)
+                    secondOp = Literal(value: op.value, description: op.description)
                 } else if result == nil {
-                    result = Literal(value: op.value!, description: op.description!)
+                    result = Literal(value: op.value, description: op.description)
                 }
             }
             if pendingResult != nil {
                 returnValue.result = pendingResult!.value
-                returnValue.description = pendingResult!.description!
+                returnValue.description = pendingResult!.description
                 pendingResult = nil
             } else if result != nil {
                 returnValue.result = result!.value
-                returnValue.description = result!.description!
+                returnValue.description = result!.description
             }
         }
         return returnValue
@@ -124,7 +128,7 @@ struct CalculatorBrain {
     }
     
     mutating func setOperand(variable: String) {
-        operations.append(Literal(value: nil, description: variable))
+        operations.append(Literal(value: 0.0, description: variable))
     }
     
     mutating func undo() {
