@@ -67,17 +67,20 @@ struct CalculatorBrain {
                 case .constant(let value):
                     result = Literal(value: value, description: op.description!)
                 case .unaryOperation(let function, let formattingFunction):
-                    if returnValue.isPending {
+                    if returnValue.isPending && secondOp != nil {
                         secondOp = Literal(value: function(secondOp!.value!),
                                            description:formattingFunction(
-                                            secondOp!.description!))
+                                            secondOp!.description!)
+                        )
                         pendingResult = Literal(value: secondOp!.value,
                                                 description: pendingBinaryFunction!.formattingFunction(
-                                                    result!.description!, secondOp!.description!))
+                                                    result!.description!, secondOp!.description!)
+                        )
                     } else {
                         result = Literal(value: function(result!.value!),
                                          description: formattingFunction(
-                                            result!.description!))
+                                            result!.description!)
+                        )
                     }
                 case .binaryOperation(let function, let formattingFunction):
                     pendingBinaryFunction = (function, formattingFunction)
@@ -91,7 +94,8 @@ struct CalculatorBrain {
                         result = Literal(value: pendingBinaryFunction!.function(
                             result!.value!, secondOp!.value!),
                                          description: pendingBinaryFunction!.formattingFunction(
-                                            result!.description!, secondOp!.description!))
+                                            result!.description!, secondOp!.description!)
+                        )
                         returnValue.isPending = false
                         secondOp = nil
                     }

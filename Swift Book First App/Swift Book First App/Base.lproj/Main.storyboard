@@ -402,7 +402,7 @@
                                                             <fontDescription key="titleFontDescription" type="system" pointSize="30"/>
                                                         </buttonConfiguration>
                                                         <connections>
-                                                            <action selector="touchBackspace:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CLT-wo-S3U"/>
+                                                            <action selector="touchBackspace:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TTd-gr-TDZ"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
