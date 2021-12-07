@@ -100,11 +100,11 @@ class CalculatorBrain {
     }
     
     func setOperand(_ operand: Double, with formatting: String) {
-        accumulator = (operand, formatting)
+        sequence.append(.operand(value: operand, formatting: formatting))
     }
     
     func setOperation(_ operation: String) {
-        // ?
+        sequence.append(.operation(symbol: operation))
     }
     
 //    mutating func undo() {
