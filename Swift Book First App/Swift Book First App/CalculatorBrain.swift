@@ -142,15 +142,11 @@ struct CalculatorBrain {
         sequence.append(.operation(.init(symbol: operation)))
     }
     
-//    mutating func undo() {
-//        guard !operations.isEmpty else {
-//            return
-//        }
-//
-//        let operation = operations.removeLast()
-//        if operation.description == "=" {
-//            operations.removeLast()
-//        }
-//        // implement before evaluate and variable
-//    }
+    mutating func undo() {
+        guard !sequence.isEmpty else {
+            return
+        }
+        
+        sequence.removeLast()
+    }
 }
