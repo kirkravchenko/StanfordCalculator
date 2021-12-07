@@ -127,7 +127,13 @@ struct CalculatorBrain {
         operations.append(Literal(value: nil, description: variable))
     }
     
-    func setOperand(_ operand: Double, with formatting: String) {
-        accumulator = (operand, formatting)
+    mutating func undo() {
+        if operations.count > 0 {
+            let operation = operations.removeLast()
+            if operation.description == "=" {
+                operations.removeLast()
+            }
+        }
+        // implement before evaluate and variable
     }
 }

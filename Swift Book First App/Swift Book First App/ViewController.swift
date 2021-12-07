@@ -73,21 +73,22 @@ class ViewController: UIViewController {
         }
         if let mathSymbol = sender.titleLabel?.text {
             brain.setOperand(Double(mathSymbol) ?? 0, with: mathSymbol)
-            let result = brain.evaluate()
-            displayValue = String(result.0 ?? 0)
-            if result.1 {
-                displayDescription = result.2 + ellipsis
-            } else {
-                displayDescription = result.2 + equals
-            }
+            displayResult()
         }
     }
     
     @IBAction func touchBackspace(_ sender: UIButton) {
-        if displayValue.count > 1 {
-            displayValue.removeLast()
+        brain.undo()
+        displayResult()
+    }
+    
+    func displayResult() {
+        let result = brain.evaluate()
+        displayValue = String(result.0 ?? 0)
+        if result.1 {
+            displayDescription = result.2 + ellipsis
         } else {
-            displayValue = defaultValue
+            displayDescription = result.2 + equals
         }
     }
     
