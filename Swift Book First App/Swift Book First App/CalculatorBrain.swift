@@ -28,6 +28,7 @@ struct CalculatorBrain {
     private enum Literal {
         case operand(Operand)
         case operation(Operation)
+        case variable(Varible)
         
         struct Operand {
             let value: Double
@@ -36,6 +37,10 @@ struct CalculatorBrain {
 
         struct Operation {
             let symbol: String
+        }
+        
+        struct Varible {
+            let key: String
         }
     }
     
@@ -58,6 +63,10 @@ struct CalculatorBrain {
         
         func set(_ operand: Literal.Operand) {
             accumulator = (operand.value, operand.description)
+        }
+        
+        func set(_ variable: Literal.Varible) {
+            accumulator = (variables?[variable.key] ?? 0, variable.key)
         }
         
         func performPendingBinaryOperation() {
@@ -103,6 +112,8 @@ struct CalculatorBrain {
             switch literal {
             case .operand(let operand):
                 set(operand)
+            case .variable(let variable):
+                set(variable)
             case .operation(let operation):
                 performOperation(for: operation.symbol)
             }
@@ -121,6 +132,10 @@ struct CalculatorBrain {
     
     mutating func set(operand: Double, with formatting: String) {
         sequence.append(.operand(.init(value: operand, description: formatting)))
+    }
+    
+    mutating func set(variable: String) {
+        sequence.append(.variable(.init(key: variable)))
     }
     
     mutating func set(operation: String) {
