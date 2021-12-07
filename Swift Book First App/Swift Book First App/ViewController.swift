@@ -87,17 +87,27 @@ class ViewController: UIViewController {
     }
     
     @IBAction func touchBackspace(_ sender: UIButton) {
-//        if userIsInMiddleOfTyping {
-//            // do something as below
-//        } else {
-//            brain.undo()
-//            as brain to recalculate
-//        }
-        
-        if displayValue.count > 1 {
-            displayValue.removeLast()
+        if userIsInMiddleOfTyping {
+            if displayValue.isEmpty {
+                displayValue = defaultValue
+            } else {
+                displayValue.removeLast()
+            }
         } else {
-            displayValue = defaultValue
+            brain.undo()
+            let evaluated = brain.evaluate(using: nil)
+            
+            if let result = evaluated.result {
+                displayValue = String(result)
+                if evaluated.isPending {
+                    displayDescription = evaluated.description + ellipsis
+                } else {
+                    displayDescription = evaluated.description + equals
+                    if sender.titleLabel?.text == randomSymbol {
+                        displayDescription = String(displayValue)
+                    }
+                }
+            }
         }
     }
     
