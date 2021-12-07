@@ -8,8 +8,6 @@
 import Foundation
 
 class CalculatorBrain {
-    
-    var description = ""
     private(set) var result: (d: Double, s: String)?
     private var accumulator: (d: Double?, s: String?)
     private struct PendingBinaryOperation {

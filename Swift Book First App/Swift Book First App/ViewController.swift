@@ -59,9 +59,6 @@ class ViewController: UIViewController {
                 title, displayValue, userIsInMiddleOfTyping, dotButtonPressed
             )
         }
-        if title != equals {
-            brain.description.append(contentsOf: title)
-        }
     }
     
     @IBAction func performOperation(_ sender: UIButton) {
@@ -71,9 +68,6 @@ class ViewController: UIViewController {
         }
         if let mathSymbol = sender.titleLabel?.text {
             brain.performOperation(for: mathSymbol)
-            if title != equals {
-                brain.description.append(contentsOf: mathSymbol)
-            }
         }
         if let result = brain.result {
             displayValue = String(result.d)
