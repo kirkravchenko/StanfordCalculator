@@ -122,6 +122,9 @@ struct CalculatorBrain {
     mutating func setOperand(_ operand: Double, with formatting: String) {
         operations.append(Literal(value: operand, description: formatting))
     }
+    
+    mutating func setOperand(variable: String) {
+        operations.append(Literal(value: nil, description: variable))
     }
     
     func setOperand(_ operand: Double, with formatting: String) {
