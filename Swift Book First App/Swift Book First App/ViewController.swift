@@ -67,8 +67,10 @@ class ViewController: UIViewController {
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
-            brain.performOperation(for: mathSymbol)
+//            brain.performOperation(for: mathSymbol)
+            brain.setOperation(mathSymbol)
         }
+        // call evaluate somewhere
         if let result = brain.result {
             displayValue = String(result.d)
             if brain.resultIsPending {
@@ -83,6 +85,13 @@ class ViewController: UIViewController {
     }
     
     @IBAction func touchBackspace(_ sender: UIButton) {
+//        if userIsInMiddleOfTyping {
+//            // do something as below
+//        } else {
+//            brain.undo()
+//            as brain to recalculate
+//        }
+        
         if displayValue.count > 1 {
             displayValue.removeLast()
         } else {
