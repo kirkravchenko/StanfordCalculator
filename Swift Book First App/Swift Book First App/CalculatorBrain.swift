@@ -37,16 +37,6 @@ struct CalculatorBrain {
     }
     private var operations = [Literal]()
     
-    private mutating func performPendingBinaryOperation() {
-        if resultIsPending && accumulator.d != nil && accumulator.s != nil {
-            accumulator = (
-                pendingBinaryOperation!.perform(with: accumulator.d!),
-                pendingBinaryOperation!.performFormatting(with: accumulator.s!)
-            )
-            pendingBinaryOperation = nil
-        }
-    }
-    
     func evaluate(using variables: Dictionary<String, Double>? = nil)
     -> (result: Double?, isPending: Bool, description: String) {
         if variables != nil {
@@ -60,8 +50,8 @@ struct CalculatorBrain {
         var pendingResult: Literal? = nil
         var pendingBinaryFunction: (function: (Double, Double) -> Double,
                                     formattingFunction: (String, String) -> String)? = nil
-        
-        for op in operations {
+        // TODO: move to a separate func -
+        func performOperation(_ op: Literal) {
             if let operation = CalculatorOperation.getOperation(by: op.description) {
                 switch operation {
                 case .constant(let value):
@@ -111,6 +101,11 @@ struct CalculatorBrain {
                     result = Literal(value: op.value, description: op.description)
                 }
             }
+        }
+        
+        for op in operations {
+            performOperation(op)
+            
             if pendingResult != nil {
                 returnValue.result = pendingResult!.value
                 returnValue.description = pendingResult!.description
@@ -120,6 +115,7 @@ struct CalculatorBrain {
                 returnValue.description = result!.description
             }
         }
+        
         return returnValue
     }
     
@@ -127,9 +123,9 @@ struct CalculatorBrain {
         operations.append(Literal(value: operand, description: formatting))
     }
     
-    mutating func setOperand(variable: String) {
-        operations.append(Literal(value: 0.0, description: variable))
-    }
+//    mutating func setOperand(variable: String) {
+//        operations.append(Literal(value: 0.0, description: variable))
+//    }
     
     mutating func undo() {
         if operations.count > 0 {
