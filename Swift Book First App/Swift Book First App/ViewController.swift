@@ -71,12 +71,14 @@ class ViewController: UIViewController {
             brain.setOperation(mathSymbol)
         }
         // call evaluate somewhere
-        if let result = brain.result {
-            displayValue = String(result.d)
-            if brain.resultIsPending {
-                displayDescription = result.s + ellipsis
+        let evaluated = brain.evaluate(using: nil)
+        
+        if let result = evaluated.result {
+            displayValue = String(result)
+            if evaluated.isPending {
+                displayDescription = evaluated.description + ellipsis
             } else {
-                displayDescription = result.s + equals
+                displayDescription = evaluated.description + equals
                 if sender.titleLabel?.text == randomSymbol {
                     displayDescription = String(displayValue)
                 }

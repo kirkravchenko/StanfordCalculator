@@ -8,8 +8,8 @@
 import Foundation
 
 class CalculatorBrain {
+    @available(*, deprecated, message: "Deprecation description")
     private(set) var result: (d: Double, s: String)?
-    private var accumulator: (d: Double?, s: String?)
     private struct PendingBinaryOperation {
         var function: (Double,Double) -> Double
         var formattingFunction: (String, String) -> String
@@ -22,89 +22,109 @@ class CalculatorBrain {
             formattingFunction(stringRepresentation, secondOperand)
         }
     }
-    private var pendingBinaryOperation: PendingBinaryOperation?
-    var resultIsPending: Bool {
-        pendingBinaryOperation != nil
-    }
-    private func  performPendingBinaryOperation() {
-        if resultIsPending && accumulator.d != nil && accumulator.s != nil {
-            accumulator = (
-                pendingBinaryOperation!.perform(with: accumulator.d!),
-                pendingBinaryOperation!.performFormatting(with: accumulator.s!)
-            )
-            pendingBinaryOperation = nil
-        }
-    }
-    
-//    private struct LiteralOperand {
-//        let value: Double
-//        let description: String
-//    }
-//
-//    private struct LiteralOperation {
-//        let symbol: String
-//    }
+    @available(*, deprecated, message: "Deprecation description")
+    private(set) var resultIsPending: Bool = false
     
     private enum Literal {
-        case operand(value: Double, formatting: String)
-        case operation(symbol: String)
+        case operand(Operand)
+        case operation(Operation)
+        
+        struct Operand {
+            let value: Double
+            let description: String
+        }
+
+        struct Operation {
+            let symbol: String
+        }
     }
     
     private var sequence: [Literal] = []
     
     // enum == OR
-    // struct == AND
+    // struct, class == AND
+    
+    // isAllGood: Bool == { true, false }
+    // results == CalculatorBrain * Bool
     
     // Literal as struct = Double * String
     
     typealias EvaluationResult = (result: Double?, isPending: Bool, description: String)
     func evaluate(using variables: Dictionary<String, Double>? = nil) -> EvaluationResult {
+        // go through sequence
+        // evaluate literals
+        var accumulator: (d: Double?, s: String?)
+        var pendingBinaryOperation: PendingBinaryOperation?
         
-        
-        return (nil, false, "")
-    }
-    
-    func performOperation(for symbol: String) {
-        guard let operation = CalculatorOperation.getOperation(by: symbol) else {
-            return
+        func set(_ operand: Literal.Operand) {
+            accumulator = (operand.value, operand.description)
         }
-        switch operation {
-        case .constant(let value):
-            accumulator = (value, symbol)
-        case .unaryOperation(let function, let formattingFunction):
-            if accumulator.d != nil && accumulator.s != nil {
-                accumulator = (function(accumulator.d!),
-                               formattingFunction(accumulator.s!))
-            }
-        case .binaryOperation(let function, let formattingFunction):
-            if accumulator.d != nil && accumulator.s != nil {
-                pendingBinaryOperation = PendingBinaryOperation (
-                    function: function, formattingFunction: formattingFunction,
-                    firstOperand: accumulator.d!,
-                    stringRepresentation: accumulator.s!
+        
+        func performPendingBinaryOperation() {
+            if pendingBinaryOperation != nil && accumulator.d != nil && accumulator.s != nil {
+                accumulator = (
+                    pendingBinaryOperation!.perform(with: accumulator.d!),
+                    pendingBinaryOperation!.performFormatting(with: accumulator.s!)
                 )
-                accumulator = (nil, nil)
+                pendingBinaryOperation = nil
             }
-        case .random(let function, let formattingFunction):
-            let randomValue = function()
-            accumulator = (randomValue, formattingFunction(randomValue))
-        case .equals:
-            performPendingBinaryOperation()
         }
+        
+        func performOperation(for symbol: String) {
+            guard let operation = CalculatorOperation.getOperation(by: symbol) else {
+                return
+            }
+            switch operation {
+            case .constant(let value):
+                accumulator = (value, symbol)
+            case .unaryOperation(let function, let formattingFunction):
+                if accumulator.d != nil && accumulator.s != nil {
+                    accumulator = (function(accumulator.d!),
+                                   formattingFunction(accumulator.s!))
+                }
+            case .binaryOperation(let function, let formattingFunction):
+                if accumulator.d != nil && accumulator.s != nil {
+                    pendingBinaryOperation = PendingBinaryOperation (
+                        function: function, formattingFunction: formattingFunction,
+                        firstOperand: accumulator.d!,
+                        stringRepresentation: accumulator.s!
+                    )
+                    accumulator = (nil, nil)
+                }
+            case .random(let function, let formattingFunction):
+                let randomValue = function()
+                accumulator = (randomValue, formattingFunction(randomValue))
+            case .equals:
+                performPendingBinaryOperation()
+            }
+        }
+        
+        for literal in sequence {
+            switch literal {
+            case .operand(let operand):
+                set(operand)
+            case .operation(let operation):
+                performOperation(for: operation.symbol)
+            }
+        }
+        
         if let operation = pendingBinaryOperation {
-            result = (accumulator.d ?? operation.firstOperand,
-                      operation.performFormatting(with: accumulator.s ?? ""))
+            return (
+                accumulator.d ?? operation.firstOperand,
+                true,
+                operation.performFormatting(with: accumulator.s ?? "")
+            )
         } else {
-            result = (accumulator.d ?? 0, accumulator.s ?? "")
+            return (accumulator.d ?? 0, false, accumulator.s ?? "")
         }
     }
     
     func setOperand(_ operand: Double, with formatting: String) {
-        sequence.append(.operand(value: operand, formatting: formatting))
+        sequence.append(.operand(.init(value: operand, description: formatting)))
     }
     
     func setOperation(_ operation: String) {
-        sequence.append(.operation(symbol: operation))
+        sequence.append(.operation(.init(symbol: operation)))
     }
     
 //    mutating func undo() {
