@@ -63,12 +63,12 @@ class ViewController: UIViewController {
     
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInMiddleOfTyping {
-            brain.setOperand(Double(displayValue) ?? 0, with: displayValue)
+            brain.set(operand: Double(displayValue) ?? 0, with: displayValue)
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
 //            brain.performOperation(for: mathSymbol)
-            brain.setOperation(mathSymbol)
+            brain.set(operation: mathSymbol)
         }
         // call evaluate somewhere
         let evaluated = brain.evaluate(using: nil)

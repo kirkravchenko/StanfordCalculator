@@ -119,11 +119,11 @@ class CalculatorBrain {
         }
     }
     
-    func setOperand(_ operand: Double, with formatting: String) {
+    func set(operand: Double, with formatting: String) {
         sequence.append(.operand(.init(value: operand, description: formatting)))
     }
     
-    func setOperation(_ operation: String) {
+    func set(operation: String) {
         sequence.append(.operation(.init(symbol: operation)))
     }
     
