@@ -67,18 +67,16 @@ class ViewController: UIViewController {
             userIsInMiddleOfTyping = false
         }
         if let mathSymbol = sender.titleLabel?.text {
-//            brain.performOperation(for: mathSymbol)
             brain.set(operation: mathSymbol)
         }
-        // call evaluate somewhere
-        let evaluated = brain.evaluate(using: nil)
         
-        if let result = evaluated.result {
+        let (result, isPending, description) = brain.evaluate(using: nil)
+        if let result = result {
             displayValue = String(result)
-            if evaluated.isPending {
-                displayDescription = evaluated.description + ellipsis
+            if isPending {
+                displayDescription = description + ellipsis
             } else {
-                displayDescription = evaluated.description + equals
+                displayDescription = description + equals
                 if sender.titleLabel?.text == randomSymbol {
                     displayDescription = String(displayValue)
                 }
@@ -95,14 +93,14 @@ class ViewController: UIViewController {
             }
         } else {
             brain.undo()
-            let evaluated = brain.evaluate(using: nil)
             
-            if let result = evaluated.result {
+            let (result, isPending, description) = brain.evaluate(using: nil)
+            if let result = result {
                 displayValue = String(result)
-                if evaluated.isPending {
-                    displayDescription = evaluated.description + ellipsis
+                if isPending {
+                    displayDescription = description + ellipsis
                 } else {
-                    displayDescription = evaluated.description + equals
+                    displayDescription = description + equals
                     if sender.titleLabel?.text == randomSymbol {
                         displayDescription = String(displayValue)
                     }
