@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     private let randomSymbol = "?"
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
+    var variables: [String:Double]? = nil
     var displayDescription: String {
         get {
             resultDescription.text ?? defaultValue
@@ -80,7 +81,8 @@ class ViewController: UIViewController {
             brain.set(operation: mathSymbol)
         }
         
-        let (result, isPending, description) = brain.evaluate(using: nil)
+        let (result, isPending, description) = brain.evaluate(
+            using: variables == nil ? nil : variables)
         if let result = result {
             displayValue = String(result)
             if isPending {
@@ -122,6 +124,8 @@ class ViewController: UIViewController {
     @IBAction func touchCancel(_ sender: UIButton) {
         displayValue = defaultValue
         displayDescription = defaultValue
+        displayVariable = defaultValue
+        variables = nil
         brain = CalculatorBrain()
     }
     
@@ -132,8 +136,9 @@ class ViewController: UIViewController {
         }
         if labelText == "→M" {
             displayVariable = displayValue
-            let (result, isPending, description) =
-            brain.evaluate(using: ["M": Double(displayValue)!])
+            userIsInMiddleOfTyping = false
+            variables = ["M": Double(displayValue)!]
+            let (result, isPending, description) = brain.evaluate(using: variables)
             if let result = result {
                 displayValue = String(result)
                 if isPending {
