@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var resultDescription: UILabel!
     
+    @IBOutlet weak var variable: UILabel!
+    
     private var brain = CalculatorBrain()
     private let ellipsis = "..."
     private let equals = "="
@@ -37,6 +39,14 @@ class ViewController: UIViewController {
             display.text = Self.formatter.string(
                 from: Self.formatter.number(
                     from: newValue) ?? 0) ?? defaultValue
+        }
+    }
+    var displayVariable: String {
+        get {
+            variable.text ?? defaultValue
+        }
+        set {
+            variable.text = newValue
         }
     }
     
@@ -113,6 +123,31 @@ class ViewController: UIViewController {
         displayValue = defaultValue
         displayDescription = defaultValue
         brain = CalculatorBrain()
+    }
+    
+    @IBAction func touchVariable(_ sender: UIButton) {
+        guard let label = sender.titleLabel,
+              let labelText = label.text else {
+            return
+        }
+        if labelText == "→M" {
+            displayVariable = displayValue
+            let (result, isPending, description) =
+            brain.evaluate(using: ["M": Double(displayValue)!])
+            if let result = result {
+                displayValue = String(result)
+                if isPending {
+                    displayDescription = description + ellipsis
+                } else {
+                    displayDescription = description + equals
+                    if sender.titleLabel?.text == randomSymbol {
+                        displayDescription = String(displayValue)
+                    }
+                }
+            }
+        } else if labelText == "M" {
+            brain.set(variable: labelText)
+        }
     }
     
     func process(
