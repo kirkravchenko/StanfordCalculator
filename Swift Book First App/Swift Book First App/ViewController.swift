@@ -94,9 +94,6 @@ class ViewController: UIViewController {
                 displayDescription = description + ellipsis
             } else {
                 displayDescription = description + equals
-                if sender.titleLabel?.text == randomSymbol {
-                    displayDescription = String(displayValue)
-                }
             }
         }
     }
