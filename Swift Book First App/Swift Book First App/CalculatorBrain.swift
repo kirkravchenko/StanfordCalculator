@@ -66,7 +66,7 @@ struct CalculatorBrain {
         }
         
         func set(_ variable: Literal.Varible) {
-            accumulator = (variables?[variable.key] ?? 0, variable.key)
+            accumulator = (variables[variable.key] ?? 0, variable.key)
         }
         
         func performPendingBinaryOperation() {
