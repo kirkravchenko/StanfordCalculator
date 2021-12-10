@@ -22,7 +22,7 @@ extension CalculatorBrain {
                 "π": .constant(Double.pi),
                 "e": .constant(M_E),
                 "C": .constant(0),
-                "√": .unaryOperation(sqrt, { sqrt(Double($0)!).isNormal ? "√(\($0))" : "\(sqrt(Double($0)!))"}),
+                "√": .unaryOperation(sqrt, { sqrt(Double($0) ?? 1).isNormal ? "√(\($0))" : "\(sqrt(Double($0)!))"}),
                 "cos": .unaryOperation(cos, { "cos(\($0))" }),
                 "sin": .unaryOperation(sin, { "sin(\($0))" }),
                 "+/-": .unaryOperation(-, { "\(-(Double($0)!))" }),
