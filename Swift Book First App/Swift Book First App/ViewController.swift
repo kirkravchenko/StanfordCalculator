@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     private let dot = "."
     private let defaultValue = "0"
     private let randomSymbol = "?"
+    var specificReport = true
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
     var variables: [String: Double] = [:]
@@ -81,8 +82,8 @@ class ViewController: UIViewController {
             brain.set(operation: mathSymbol)
         }
         
-        let (result, isPending, description) = brain.evaluate(
-            using: variables == nil ? nil : variables)
+        let (result, isPending, description) = brain.evaluate(using: variables,
+                                                              specificReport)
         if let result = result {
             displayValue = String(result)
             if isPending {
@@ -106,7 +107,8 @@ class ViewController: UIViewController {
         } else {
             brain.undo()
             
-            let (result, isPending, description) = brain.evaluate(using: nil)
+            let (result, isPending, description) = brain.evaluate(using: variables,
+                                                                  specificReport)
             if let result = result {
                 displayValue = String(result)
                 if isPending {
@@ -138,7 +140,8 @@ class ViewController: UIViewController {
             displayVariable = displayValue
             userIsInMiddleOfTyping = false
             variables = ["M": Double(displayValue)!]
-            let (result, isPending, description) = brain.evaluate(using: variables)
+            let (result, isPending, description) = brain.evaluate(using: variables,
+                                                                  specificReport)
             if let result = result {
                 displayValue = String(result)
                 if isPending {
