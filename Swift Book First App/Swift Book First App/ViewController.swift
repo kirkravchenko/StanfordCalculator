@@ -78,10 +78,14 @@ class ViewController: UIViewController {
             brain.set(operand: Double(displayValue) ?? 0, with: displayValue)
             userIsInMiddleOfTyping = false
         }
-        if let mathSymbol = sender.titleLabel?.text {
-            brain.set(operation: mathSymbol)
+        guard let mathSymbol = sender.titleLabel?.text else {
+            return
         }
-        
+        brain.set(operation: mathSymbol)
+        displayResult()
+    }
+    
+    func displayResult() {
         let (result, isPending, description) = brain.evaluate(using: variables,
                                                               specificReport)
         if let result = result {
@@ -106,20 +110,7 @@ class ViewController: UIViewController {
             }
         } else {
             brain.undo()
-            
-            let (result, isPending, description) = brain.evaluate(using: variables,
-                                                                  specificReport)
-            if let result = result {
-                displayValue = String(result)
-                if isPending {
-                    displayDescription = description + ellipsis
-                } else {
-                    displayDescription = description + equals
-                    if sender.titleLabel?.text == randomSymbol {
-                        displayDescription = String(displayValue)
-                    }
-                }
-            }
+            displayResult()
         }
     }
     
@@ -140,19 +131,7 @@ class ViewController: UIViewController {
             displayVariable = displayValue
             userIsInMiddleOfTyping = false
             variables = ["M": Double(displayValue)!]
-            let (result, isPending, description) = brain.evaluate(using: variables,
-                                                                  specificReport)
-            if let result = result {
-                displayValue = String(result)
-                if isPending {
-                    displayDescription = description + ellipsis
-                } else {
-                    displayDescription = description + equals
-                    if sender.titleLabel?.text == randomSymbol {
-                        displayDescription = String(displayValue)
-                    }
-                }
-            }
+            displayResult()
         } else if labelText == "M" {
             brain.set(variable: labelText)
         }
