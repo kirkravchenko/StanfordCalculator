@@ -25,7 +25,7 @@ extension CalculatorBrain {
                 "√": .unaryOperation(sqrt, { "√(\($0))" }),
                 "cos": .unaryOperation(cos, { "cos(\($0))" }),
                 "sin": .unaryOperation(sin, { "sin(\($0))" }),
-                "+/-": .unaryOperation(-, { "±(\($0))" }),
+                "+/-": .unaryOperation(-, { "\(-(Double($0)!))" }),
                 "✕": .binaryOperation(*, { "\($0)✕\($1)" }),
                 "÷": .binaryOperation(/, { "\($0)÷\($1)" }),
                 "+": .binaryOperation(+, { "\($0)+\($1)" }),
