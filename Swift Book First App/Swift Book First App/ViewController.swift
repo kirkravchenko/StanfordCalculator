@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     private let randomSymbol = "?"
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
-    var variables: [String:Double]? = nil
+    var variables: [String: Double] = [:]
     var displayDescription: String {
         get {
             resultDescription.text ?? defaultValue
@@ -125,7 +125,7 @@ class ViewController: UIViewController {
         displayValue = defaultValue
         displayDescription = defaultValue
         displayVariable = defaultValue
-        variables = nil
+        variables = [:]
         brain = CalculatorBrain()
     }
     
