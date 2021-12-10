@@ -55,9 +55,7 @@ struct CalculatorBrain {
     // Literal as struct = Double * String
     
     typealias EvaluationResult = (result: Double?, isPending: Bool, description: String)
-    func evaluate(using variables: Dictionary<String, Double>? = nil) -> EvaluationResult {
-        // go through sequence
-        // evaluate literals
+    func evaluate(using variables: Dictionary<String, Double> = [:], _ withSpecificReport: Bool) -> EvaluationResult {
         var accumulator: (d: Double?, s: String?)
         var pendingBinaryOperation: PendingBinaryOperation?
         
@@ -126,7 +124,10 @@ struct CalculatorBrain {
                 operation.performFormatting(with: accumulator.s ?? "")
             )
         } else {
-            return (accumulator.d ?? 0, false, accumulator.s ?? "")
+            return (accumulator.d ?? 0, false,
+                    accumulator.d?.isNormal ?? false ?
+                    accumulator.s ?? "" : withSpecificReport ?
+                    accumulator.s ?? "" : "error")
         }
     }
     
