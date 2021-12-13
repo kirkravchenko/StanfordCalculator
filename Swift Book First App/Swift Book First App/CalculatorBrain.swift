@@ -50,18 +50,18 @@ struct CalculatorBrain {
     
     private var sequence: [Literal] = []
     
-    // enum == OR
-    // struct, class == AND
-    
-    // isAllGood: Bool == { true, false }
-    // results == CalculatorBrain * Bool
-    
-    // Literal as struct = Double * String
-    
     typealias EvaluationResult = (result: Double?, isPending: Bool, description: String)
-    func evaluate(using variables: Dictionary<String, Double> = [:], _ withSpecificReport: Bool) -> EvaluationResult {
+    typealias EvaluationWithErrorResult = (result: Double?, isPending: Bool, description: String, error: String?)
+
+    func evaluate(using variables: Dictionary<String, Double> = [:]) -> EvaluationResult {
+        let (result, isPending, description, _) = evaluate(using: variables)
+        return (result, isPending, description)
+    }
+    
+    func evaluate(using variables: Dictionary<String, Double> = [:]) -> EvaluationWithErrorResult {
         var accumulator: (d: Double?, s: String?)
         var pendingBinaryOperation: PendingBinaryOperation?
+        var error: String?
         
         func set(_ operand: Literal.Operand) {
             accumulator = (operand.value, operand.description)
@@ -73,6 +73,7 @@ struct CalculatorBrain {
         
         func performPendingBinaryOperation() {
             if pendingBinaryOperation != nil && accumulator.d != nil && accumulator.s != nil {
+                error = pendingBinaryOperation!.performValidating(with: accumulator.d!)
                 accumulator = (
                     pendingBinaryOperation!.perform(with: accumulator.d!),
                     pendingBinaryOperation!.performFormatting(with: accumulator.s!)
@@ -88,15 +89,17 @@ struct CalculatorBrain {
             switch operation {
             case .constant(let value):
                 accumulator = (value, symbol)
-            case .unaryOperation(let function, let formattingFunction):
+            case .unaryOperation(let function, let formatter, let validator):
                 if accumulator.d != nil && accumulator.s != nil {
+                    error = validator(accumulator.d!)
                     accumulator = (function(accumulator.d!),
-                                   formattingFunction(accumulator.s!))
+                                   formatter(accumulator.s!))
                 }
-            case .binaryOperation(let function, let formattingFunction):
+            case .binaryOperation(let function, let formatter, let validator):
                 if accumulator.d != nil && accumulator.s != nil {
-                    pendingBinaryOperation = PendingBinaryOperation (
-                        function: function, formattingFunction: formattingFunction,
+                    pendingBinaryOperation = PendingBinaryOperation(
+                        function: function, formatter: formatter,
+                        validator: validator,
                         firstOperand: accumulator.d!,
                         stringRepresentation: accumulator.s!
                     )
@@ -125,13 +128,16 @@ struct CalculatorBrain {
             return (
                 accumulator.d ?? operation.firstOperand,
                 true,
-                operation.performFormatting(with: accumulator.s ?? "")
+                operation.performFormatting(with: accumulator.s ?? ""),
+                error
             )
         } else {
-            return (accumulator.d ?? 0, false,
-                    accumulator.d?.isNormal ?? false ?
-                    accumulator.s ?? "" : withSpecificReport ?
-                    accumulator.s ?? "" : "error")
+            return (
+                accumulator.d ?? 0,
+                false,
+                accumulator.s ?? "",
+                error
+            )
         }
     }
     
