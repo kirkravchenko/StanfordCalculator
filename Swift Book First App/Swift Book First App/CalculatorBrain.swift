@@ -12,14 +12,18 @@ struct CalculatorBrain {
     private(set) var result: (d: Double, s: String)?
     private struct PendingBinaryOperation {
         var function: (Double,Double) -> Double
-        var formattingFunction: (String, String) -> String
+        var formatter: (String, String) -> String
+        var validator: (Double, Double) -> String?
         var firstOperand: Double
         var stringRepresentation: String
         func perform(with secondOperand: Double) -> Double {
             function (firstOperand, secondOperand)
         }
         func performFormatting(with secondOperand: String) -> String {
-            formattingFunction(stringRepresentation, secondOperand)
+            formatter(stringRepresentation, secondOperand)
+        }
+        func performValidating(with secondOperand: Double) -> String? {
+            validator(firstOperand, secondOperand)
         }
     }
     @available(*, deprecated, message: "Deprecation description")
