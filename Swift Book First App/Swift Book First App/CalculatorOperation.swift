@@ -12,8 +12,8 @@ extension CalculatorBrain {
     enum CalculatorOperation {
         
         case constant(Double)
-        case unaryOperation((Double) -> Double, (String) -> String)
-        case binaryOperation((Double, Double) -> Double, (String, String) -> String)
+        case unaryOperation((Double) -> Double, (String) -> String, (Double) -> String? = { _ in nil })
+        case binaryOperation((Double, Double) -> Double, (String, String) -> String, (Double, Double) -> String? = { _,_ in nil })
         case equals
         case random(() -> Double, (Double) -> String)
         
@@ -22,12 +22,12 @@ extension CalculatorBrain {
                 "π": .constant(Double.pi),
                 "e": .constant(M_E),
                 "C": .constant(0),
-                "√": .unaryOperation(sqrt, { sqrt(Double($0) ?? 1).isNormal ? "√(\($0))" : "\(sqrt(Double($0)!))"}),
+                "√": .unaryOperation(sqrt, { "√(\($0))"}, { $0 < 0 ? "Number is lower than zero" : nil }),
                 "cos": .unaryOperation(cos, { "cos(\($0))" }),
                 "sin": .unaryOperation(sin, { "sin(\($0))" }),
                 "+/-": .unaryOperation(-, { "\(-(Double($0)!))" }),
                 "✕": .binaryOperation(*, { "\($0)✕\($1)" }),
-                "÷": .binaryOperation(/, { ((Double($0) ?? 0) / (Double($1) ?? 1)).isNormal ? "\($0)÷\($1)" : "\(((Double($0) ?? 0) / (Double($1) ?? 1)))" }),
+                "÷": .binaryOperation(/, { "\($0)÷\($1)" }, { $1 == 0 ? "Division by zero" : nil }),
                 "+": .binaryOperation(+, { "\($0)+\($1)" }),
                 "-": .binaryOperation(-, { "\($0)-\($1)" }),
                 "=": .equals,
