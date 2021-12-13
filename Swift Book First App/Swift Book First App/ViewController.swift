@@ -21,7 +21,6 @@ class ViewController: UIViewController {
     private let dot = "."
     private let defaultValue = "0"
     private let randomSymbol = "?"
-    var specificReport = true
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
     var variables: [String: Double] = [:]
@@ -86,14 +85,13 @@ class ViewController: UIViewController {
     }
     
     func displayResult() {
-        let (result, isPending, description) = brain.evaluate(using: variables,
-                                                              specificReport)
+        let (result, isPending, description, error) = brain.evaluate(using: variables)
         if let result = result {
             displayValue = String(result)
             if isPending {
-                displayDescription = description + ellipsis
+                displayDescription = error == nil ? description + ellipsis : error!
             } else {
-                displayDescription = description + equals
+                displayDescription = error == nil ? description + equals : error!
             }
         }
     }
