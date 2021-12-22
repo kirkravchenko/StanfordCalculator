@@ -15,6 +15,8 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     
     @IBOutlet weak var variable: UILabel!
     
+    @IBOutlet weak var graphButton: UIButton!
+    
     private var brain = CalculatorBrain()
     private let ellipsis = "..."
     private let equals = "="
@@ -22,6 +24,7 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     private let defaultValue = "0"
     private let randomSymbol = "?"
     private var operation: String?
+    private var variableEntered = false
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
     var variables: [String: Double] = [:]
@@ -94,6 +97,9 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
                 displayDescription = error == nil ? description + ellipsis : error!
             } else {
                 displayDescription = error == nil ? description + equals : error!
+                if variableEntered {
+                    graphButton.isEnabled = true
+                }
             }
         }
     }
@@ -131,6 +137,7 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
             displayResult()
         } else if labelText == "M" {
             brain.set(variable: labelText)
+            variableEntered = true
         }
     }
     
@@ -156,4 +163,9 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
             }
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+           graphButton.setTitleColor(.systemGray, for: .disabled)
+           graphButton.isEnabled = false
+       }
 }
