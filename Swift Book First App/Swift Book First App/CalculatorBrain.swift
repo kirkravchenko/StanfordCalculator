@@ -32,7 +32,7 @@ struct CalculatorBrain {
     private enum Literal {
         case operand(Operand)
         case operation(Operation)
-        case variable(Varible)
+        case variable(Variable)
         
         struct Operand {
             let value: Double
@@ -43,7 +43,7 @@ struct CalculatorBrain {
             let symbol: String
         }
         
-        struct Varible {
+        struct Variable {
             let key: String
         }
     }
@@ -67,7 +67,7 @@ struct CalculatorBrain {
             accumulator = (operand.value, operand.description)
         }
         
-        func set(_ variable: Literal.Varible) {
+        func set(_ variable: Literal.Variable) {
             accumulator = (variables[variable.key] ?? 0, variable.key)
         }
         
