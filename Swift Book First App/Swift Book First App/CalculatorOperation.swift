@@ -30,8 +30,7 @@ extension CalculatorBrain {
                 "÷": .binaryOperation(/, { "\($0)÷\($1)" }, { $1 == 0 ? "Division by zero" : nil }),
                 "+": .binaryOperation(+, { "\($0)+\($1)" }),
                 "-": .binaryOperation(-, { "\($0)-\($1)" }),
-                "=": .equals,
-                "?": .random({ Double.random(in: 0.0 ..< 1.0) }, { String($0) })
+                "=": .equals
             ]
             return operations[symbol]
         }
