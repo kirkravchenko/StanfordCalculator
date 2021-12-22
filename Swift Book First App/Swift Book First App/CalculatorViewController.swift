@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController, UISplitViewControllerDelegate {
     
     @IBOutlet weak var display: UILabel!
     
@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     private let dot = "."
     private let defaultValue = "0"
     private let randomSymbol = "?"
+    private var operation: String?
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
     var variables: [String: Double] = [:]
@@ -80,6 +81,7 @@ class ViewController: UIViewController {
         guard let mathSymbol = sender.titleLabel?.text else {
             return
         }
+        operation = mathSymbol
         brain.set(operation: mathSymbol)
         displayResult()
     }
@@ -143,6 +145,15 @@ class ViewController: UIViewController {
         } else {
             self.userIsInMiddleOfTyping = true
             return title
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destinationVC = segue.destination as? GraphViewController {
+            destinationVC.function = {
+                let (result, _, _, _) = self.brain.evaluate(using: ["M": $0])
+                return result ?? 0
+            }
         }
     }
 }
