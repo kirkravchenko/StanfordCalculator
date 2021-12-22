@@ -23,7 +23,6 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     private let dot = "."
     private let defaultValue = "0"
     private let randomSymbol = "?"
-    private var operation: String?
     private var variableEntered = false
     var userIsInMiddleOfTyping = false
     var dotButtonPressed = false
@@ -84,7 +83,6 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
         guard let mathSymbol = sender.titleLabel?.text else {
             return
         }
-        operation = mathSymbol
         brain.set(operation: mathSymbol)
         displayResult()
     }
