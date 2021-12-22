@@ -8,10 +8,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Split View Controller-->
+        <!--Calculator Root View Controller-->
         <scene sceneID="gFL-eR-SJ8">
             <objects>
-                <splitViewController allowDoubleColumnStyle="YES" id="edW-eK-CGS" sceneMemberID="viewController">
+                <splitViewController allowDoubleColumnStyle="YES" id="edW-eK-CGS" customClass="CalculatorRootViewController" customModule="Swift_Book_First_App" customModuleProvider="target" sceneMemberID="viewController">
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="masterViewController" id="dMC-xO-kKD"/>
                         <segue destination="Uz4-G1-bTj" kind="relationship" relationship="detailViewController" id="u2M-vK-qmS"/>
@@ -472,7 +472,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="LGY-41-fxG"/>
+        <segue reference="u2M-vK-qmS"/>
     </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">

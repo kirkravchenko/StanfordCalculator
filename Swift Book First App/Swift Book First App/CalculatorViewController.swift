@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CalculatorViewController: UIViewController, UISplitViewControllerDelegate {
+class CalculatorViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!
     
@@ -158,8 +158,29 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
         }
     }
     
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//        self.splitViewController?.delegate = self
+//    }
+    
     override func viewDidAppear(_ animated: Bool) {
         graphButton.setTitleColor(.systemGray, for: .disabled)
         graphButton.isEnabled = displayDescription.contains("M")
+    }
+}
+
+final class CalculatorRootViewController: UISplitViewController, UISplitViewControllerDelegate {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        delegate = self
+    }
+    
+    func splitViewController(
+        _ svc: UISplitViewController,
+        topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+    ) -> UISplitViewController.Column {
+        .primary
     }
 }

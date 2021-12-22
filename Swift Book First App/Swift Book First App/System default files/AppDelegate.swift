@@ -14,19 +14,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-
-        let masterController = CalculatorViewController()
-        let navMasterController = UINavigationController(rootViewController: masterController)
-        let detailController = GraphViewController()
-        let navDetailController = UINavigationController(rootViewController: detailController)
-
-        let splitController = UISplitViewController()
-        splitController.viewControllers = [navMasterController, navDetailController]
-        splitController.preferredDisplayMode = UISplitViewController.DisplayMode.oneBesideSecondary
-        splitController.delegate = self
-        self.window?.rootViewController = splitController
-        self.window?.makeKeyAndVisible()
+//        self.window = UIWindow(frame: UIScreen.main.bounds)
+//
+//        let masterController = CalculatorViewController()
+//        let navMasterController = UINavigationController(rootViewController: masterController)
+//        let detailController = GraphViewController()
+//        let navDetailController = UINavigationController(rootViewController: detailController)
+//
+//        let splitController = UISplitViewController()
+//        splitController.viewControllers = [navMasterController, navDetailController]
+//        splitController.preferredDisplayMode = UISplitViewController.DisplayMode.oneBesideSecondary
+//        splitController.delegate = self
+//        self.window?.rootViewController = splitController
+//        self.window?.makeKeyAndVisible()
+//
+//        print("🥶", self.window?.rootViewController)
+        
         return true
     }
 
@@ -47,10 +50,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UISplitViewControllerDelegate {
 
+//    func splitViewController(
+//        _ splitViewController: UISplitViewController,
+//        collapseSecondary secondaryViewController: UIViewController,
+//        onto primaryViewController: UIViewController) -> Bool {
+//            return true
+//    }
+    
     func splitViewController(
-        _ splitViewController: UISplitViewController,
-        collapseSecondary secondaryViewController: UIViewController,
-        onto primaryViewController: UIViewController) -> Bool {
-            return true
+        _ svc: UISplitViewController,
+        topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+    ) -> UISplitViewController.Column {
+        .primary
     }
 }
